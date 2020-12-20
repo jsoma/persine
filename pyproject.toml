@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "persine"
+version = "0.1.0"
+description = ""
+authors = ["Jonathan Soma <jonathan.soma@gmail.com>"]
+include = ["extensions/ublock-origin.crx"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/jsoma/persine"
+repository = "https://github.com/jsoma/persine"
+keywords = ["algorithmic accountability", "recommendation systems", "scraping"]
+
+[tool.poetry.dependencies]
+python = ">=3.6.3"
+beautifulsoup4 = "^4.9.3"
+selenium = "^3.141.0"
+pandas = "^1.1.5"
+Pillow = "^8.0.1"
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.6.0"
+pytest = "^6.2.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
