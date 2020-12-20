@@ -93,7 +93,6 @@ class Persona:
             self.update_history(state)
 
     def update_history(self, state):
-        print(state)
         """Updates history/recommendations lists with the given state"""
         same_page = [
             "youtube:like",
