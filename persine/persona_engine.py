@@ -169,7 +169,7 @@ class PersonaEngine:
         Returns a single state representation or a list of
         state representations.
         """
-        if "chrome-search" not in driver.current_url:
+        if "chrome-search" not in driver.current_url and not driver.current_url.startswith("data"):
             self.url_before_action = driver.current_url
 
         parsed = urlparse(url)

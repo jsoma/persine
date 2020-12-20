@@ -99,9 +99,10 @@ class YoutubeBridge:
     def scrape_sidebar(self):
         recs = self.driver.execute_script(
             """
-        return [...document.querySelectorAll("#items.ytd-watch-next-secondary-results-renderer > *")].map(d => {
+        return [...document.querySelectorAll("#items.ytd-watch-next-secondary-results-renderer > *")].map(d, i => {
             data = {};
             try { data['item_type'] = d.tagName; } catch(err) {};
+            try { data['position'] = i + 1; } catch(err) {};
             try { data['title'] = d.querySelector("h3").innerText } catch(err) {};
             try { data['url'] = d.querySelector("a.yt-simple-endpoint")['href'] } catch(err) {};
             try { data['channel_name'] = d.querySelector(".ytd-channel-name").innerText } catch(err) {};
@@ -120,9 +121,10 @@ class YoutubeBridge:
     def scrape_search_results(self):
         recs = self.driver.execute_script(
             """
-        return [...document.querySelectorAll("#contents.ytd-item-section-renderer > *")].map(d => {
+        return [...document.querySelectorAll("#contents.ytd-item-section-renderer > *")].map(d, i => {
             data = {};
             try { data['item_type'] = d.tagName; } catch(err) {};
+            try { data['position'] = i + 1; } catch(err) {};
             try { data['thumbnail_url'] = d.querySelector("img")['src'] } catch(err) {};
             try { data['title'] = d.querySelector("h3").innerText } catch(err) {};
             try { data['url'] = d.querySelector("a.yt-simple-endpoint")['href'] } catch(err) {};
@@ -146,9 +148,10 @@ class YoutubeBridge:
     def scrape_homepage(self):
         return self.driver.execute_script(
             """
-        return [...document.querySelectorAll("#contents.ytd-rich-grid-renderer > ytd-rich-item-renderer")].map(d => {
+        return [...document.querySelectorAll("#contents.ytd-rich-grid-renderer > ytd-rich-item-renderer")].map(d, i => {
             data = {};
             try { data['item_type'] = d.tagName; } catch(err) {};
+            try { data['position'] = i + 1; } catch(err) {};
             try { data['thumbnail_url'] = d.querySelector("img")['src'] } catch(err) {};
             try { data['title'] = d.querySelector("h3").innerText } catch(err) {};
             try { data['url'] = d.querySelector("a.yt-simple-endpoint")['href'] } catch(err) {};
