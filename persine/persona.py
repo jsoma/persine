@@ -103,7 +103,11 @@ class Persona:
 
         self.history.append(state)
         if "recommendations" in state and state["action"] not in same_page:
-            self.recommendations.extend(state["recommendations"])
+            for rec in state["recommendations"]:
+                self.recommendations.append({
+                    **rec,
+                    'action_key': state['key']
+                })
         self.save_history()
 
     def save_history(self):

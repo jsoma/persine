@@ -98,7 +98,7 @@ class PersonaEngine:
         """Returns a dictionary representation of the current page"""
 
         # Give everything a unique key
-        key = datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")[:-4]
+        key = datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")[:-3]
         state = {
             "key": key,
             "action": url,
