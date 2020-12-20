@@ -12,10 +12,10 @@ keywords = ["algorithmic accountability", "recommendation systems", "scraping"]
 
 [tool.poetry.dependencies]
 python = ">=3.6.3"
-beautifulsoup4 = "^4.9.3"
+beautifulsoup4 = ">=4.6.3"
 selenium = "^3.141.0"
 pandas = "^1.1.5"
-Pillow = "^8.0.1"
+Pillow = ">=7.0.0"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.6.0"
