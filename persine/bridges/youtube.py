@@ -50,7 +50,8 @@ class YoutubeBridge:
         )
 
     def get_player_page_data(self):
-        return self.driver.execute_script("""
+        return self.driver.execute_script(
+            """
             data = {};
             try { data['channel_url'] = document.querySelector('.ytd-channel-name a')['href'] } catch(err) {};
             try { data['channel_sub_count'] = document.querySelector("#owner-sub-count").innerText } catch(err) {};
@@ -60,13 +61,14 @@ class YoutubeBridge:
             try { data['like_count'] = document.querySelector("yt-formatted-string[aria-label*= likes").ariaLabel } catch(err) {};
             try { data['dislike_count'] = document.querySelector("yt-formatted-string[aria-label*= likes").ariaLabel } catch(err) {};
             return data;
-        """)
+        """
+        )
 
     def get_video_data(self):
         data = self.get_player_data()
-        page_data = self.get_player_page_data()
+        player_page_data = self.get_player_page_data()
         video = {
-            **page_data,
+            **player_page_data,
             "page_type": "video",
             "title": data["title"],
             "id": data["video_id"],
@@ -110,8 +112,7 @@ class YoutubeBridge:
         """  # noqa: E501
         )
         recs = [
-            rec for rec in recs
-            if rec["item_type"] != "YTD-CONTINUATION-ITEM-RENDERER"
+            rec for rec in recs if rec["item_type"] != "YTD-CONTINUATION-ITEM-RENDERER"
         ]
 
         return recs
@@ -220,10 +221,7 @@ class YoutubeBridge:
                 "recommendations": self.scrape_search_results(),
             }
         elif page_type == "homepage":
-            return {
-                "page_type": page_type,
-                "recommendations": self.scrape_homepage()
-            }
+            return {"page_type": page_type, "recommendations": self.scrape_homepage()}
 
     def run(self, url):
         parsed = urlparse(url)
@@ -276,9 +274,7 @@ class YoutubeBridge:
             ).click()
         elif parsed.path == "sign_in":
             try:
-                self.driver \
-                    .find_element_by_xpath('//*[@aria-label="Sign in"]') \
-                    .click()
+                self.driver.find_element_by_xpath('//*[@aria-label="Sign in"]').click()
             except Exception:
                 pass
 
