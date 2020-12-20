@@ -99,7 +99,7 @@ class YoutubeBridge:
     def scrape_sidebar(self):
         recs = self.driver.execute_script(
             """
-        return [...document.querySelectorAll("#items.ytd-watch-next-secondary-results-renderer > *")].map(d, i => {
+        return [...document.querySelectorAll("#items.ytd-watch-next-secondary-results-renderer > *")].map((d, i) => {
             data = {};
             try { data['item_type'] = d.tagName; } catch(err) {};
             try { data['position'] = i + 1; } catch(err) {};
@@ -121,7 +121,7 @@ class YoutubeBridge:
     def scrape_search_results(self):
         recs = self.driver.execute_script(
             """
-        return [...document.querySelectorAll("#contents.ytd-item-section-renderer > *")].map(d, i => {
+        return [...document.querySelectorAll("#contents.ytd-item-section-renderer > *")].map((d, i) => {
             data = {};
             try { data['item_type'] = d.tagName; } catch(err) {};
             try { data['position'] = i + 1; } catch(err) {};
@@ -148,7 +148,7 @@ class YoutubeBridge:
     def scrape_homepage(self):
         return self.driver.execute_script(
             """
-        return [...document.querySelectorAll("#contents.ytd-rich-grid-renderer > ytd-rich-item-renderer")].map(d, i => {
+        return [...document.querySelectorAll("#contents.ytd-rich-grid-renderer > ytd-rich-item-renderer")].map((d, i) => {
             data = {};
             try { data['item_type'] = d.tagName; } catch(err) {};
             try { data['position'] = i + 1; } catch(err) {};
