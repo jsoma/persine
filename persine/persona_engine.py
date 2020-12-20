@@ -26,7 +26,6 @@ class PersonaEngine:
         headless=False,
         driver=None,
         resume=False,
-        chromedriver=None
     ):
         # Settings
         self.height = height
@@ -38,7 +37,6 @@ class PersonaEngine:
         self.url_before_action = None
         self.headless = headless
         self.resume = resume
-        self.chromedriver = chromedriver
 
         if data_dir is not None:
             self.data_dir = data_dir
@@ -64,15 +62,24 @@ class PersonaEngine:
             os.path.dirname(__file__), "../extensions/ublock-origin.crx"
         )
         options.add_extension(ext_path)
-        options.add_argument("--autoplay-policy=no-user-gesture-required")
+
+        default_args = [
+            "--no-sandbox",
+            "--disable-dev-shm-usage",
+            "--disable-gpu",
+            "--autoplay-policy=no-user-gesture-required",
+        ]
+
+        for arg in default_args:
+            options.add_argument(arg)
+
         if self.headless:
             options.add_argument("--headless")
 
         if user_data_dir:
             options.add_argument(f"user-data-dir={user_data_dir}")
 
-        sizing = "--window-size={self.width},{self.height}"
-        options.add_argument(sizing)
+        options.add_argument(f"--window-size={self.width},{self.height}")
 
         return options
 
@@ -83,10 +90,7 @@ class PersonaEngine:
 
         options = self.driver_options()
 
-        if self.chromedriver:
-            return webdriver.Chrome(self.chromedriver, options=options)
-        else:
-            return webdriver.Chrome(options=options)
+        return webdriver.Chrome(options=options)
 
     def get_state(self, driver, url):
         """Returns a dictionary representation of the current page"""
