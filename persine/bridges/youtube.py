@@ -49,15 +49,27 @@ class YoutubeBridge:
         """
         )
 
+    def get_player_page_data(self):
+        return self.driver.execute_script("""
+            data = {};
+            try { data['channel_url'] = document.querySelector('.ytd-channel-name a')['href'] } catch(err) {};
+            try { data['channel_sub_count'] = document.querySelector("#owner-sub-count").innerText } catch(err) {};
+            try { data['view_count'] = document.querySelector('#info #count .view-count').innerText } catch(err) {};
+            try { data['view_count'] = document.querySelector('#info #count .view-count').innerText } catch(err) {};
+            try { data['uploaded_at'] = document.querySelector('#info #date yt-formatted-string').innerText } catch(err) {};
+            try { data['like_count'] = document.querySelector("yt-formatted-string[aria-label*= likes").ariaLabel } catch(err) {};
+            try { data['dislike_count'] = document.querySelector("yt-formatted-string[aria-label*= likes").ariaLabel } catch(err) {};
+            return data;
+        """)
+
     def get_video_data(self):
         data = self.get_player_data()
+        page_data = self.get_player_page_data()
         video = {
+            **page_data,
             "page_type": "video",
             "title": data["title"],
             "id": data["video_id"],
-            "channel_url": self.driver.execute_script(
-                "return document.querySelector('.ytd-channel-name a')['href']"
-            ),
             "channel_name": data["author"],
             "recommendations": self.scrape_sidebar(),
             "caption_tracks": self.driver.execute_script(
@@ -155,7 +167,13 @@ class YoutubeBridge:
             self.get_player_state()
         except Exception:
             time.sleep(5)
-            self.click_link("Skip Ads")
+            self.click_link("Skip Ad")
+
+        try:
+            self.get_player_state()
+        except Exception:
+            time.sleep(15)
+            self.click_link("Skip Ad")
 
         if self.get_player_state() != 1:
             self.play_video()
