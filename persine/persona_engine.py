@@ -58,10 +58,6 @@ class PersonaEngine:
 
     def driver_options(self, user_data_dir=None):
         options = webdriver.ChromeOptions()
-        ext_path = os.path.join(
-            os.path.dirname(__file__), "../extensions/ublock-origin.crx"
-        )
-        options.add_extension(ext_path)
 
         default_args = [
             "--no-sandbox",
@@ -73,8 +69,14 @@ class PersonaEngine:
         for arg in default_args:
             options.add_argument(arg)
 
+        # If not headless, add ublock
         if self.headless:
             options.add_argument("--headless")
+        else:
+            ext_path = os.path.join(
+                os.path.dirname(__file__), "../extensions/ublock-origin.crx"
+            )
+            options.add_extension(ext_path)
 
         if user_data_dir:
             options.add_argument(f"user-data-dir={user_data_dir}")
