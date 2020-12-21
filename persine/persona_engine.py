@@ -9,6 +9,7 @@ from urllib.parse import urlparse, urldefrag
 
 from .utils import simplify_source
 from .bridges import YoutubeBridge
+from .bridges import AmazonBridge
 from .persona import Persona
 
 
@@ -183,6 +184,8 @@ class PersonaEngine:
 
         if "youtube" in url:
             self.bridge_data = YoutubeBridge(driver).run(url)
+        elif "amazon" in url:
+            self.bridge_data = AmazonBridge(driver).run(url)
         else:
             raise Exception(f"Unknown url {url}")
 

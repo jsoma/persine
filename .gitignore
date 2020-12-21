@@ -2,6 +2,10 @@
 # Created by https://www.toptal.com/developers/gitignore/api/vscode,python,osx,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=vscode,python,osx,windows
 
+### Persine
+persona_data
+test.ipynb
+
 ### OSX ###
 # General
 .DS_Store

@@ -128,7 +128,7 @@ persona.history.to_csv('hist.csv')
 
 ## Bridges
 
-**Bridges** are site-specific scrapers that tell Persine what to click, what to scrape, and other site-specific commands. Right now the only bridge we have is for **YouTube** (add more, please?).
+**Bridges** are site-specific scrapers that tell Persine what to click, what to scrape, and other site-specific commands. Right now the only completed bridge we have is for **YouTube**, while an Amazon one is in the works.
 
 ### YouTube commands
 
