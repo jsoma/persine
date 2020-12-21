@@ -17,11 +17,11 @@ The theory is difficult to test since it involves a lot of boring clicking and Y
 
 Beyond analysis, these files can be used to repeat the experiment again later, seeing if recommendations change by time, location, user history, etc.
 
-If you didn't quite get enough data, don't worry – you can resume your exploration later, picking up right where you left off. Since Persona is on Chrome profiles, all your cookies and history will be safely stored in the meantime.
+If you didn't quite get enough data, don't worry – you can resume your exploration later, picking up right where you left off. Since each "persona" is based on Chrome profiles, all your cookies and history will be safely stored until your next run.
 
 ### An actual example
 
-See Persine in action [on Google Colab](https://colab.research.google.com/drive/1eAbfwV9mL34LVVIzW4AgwZt5NZJ21LwT?usp=sharing).
+See Persine in action [on Google Colab](https://colab.research.google.com/drive/1eAbfwV9mL34LVVIzW4AgwZt5NZJ21LwT?usp=sharing). Includes a few examples for analysis, too.
 
 ## Installation
 
@@ -31,10 +31,11 @@ pip install persine
 
 Persine will automatically install Selenium and BeautifulSoup for browsing/scraping, pandas for data analysis, and pillow for processing screenshots.
 
-You will need to install [chromedriver](https://chromedriver.chromium.org/) to allow Selenium to control Chrome. **Persine won't work without chromedriver!**
+You will need to install [chromedriver](https://chromedriver.chromium.org/) to allow Selenium to control Chrome. **Persine won't work without it!**
 
-* **Installing chromedriver on OS X:** Follow the link above, click the "latest stable release" link. Download `chromedriver_mac64.zip`, unzip it, and move the `chromedriver` file into your `PATH`. I typically put it in `/usr/local/bin`.
-* **Installing chromedriver on Windows:** Follow the link above, click the "latest stable release" link. Download `chromedriver_win32.zip`, unzip it, and move `chromedriver.exe` into your `PATH` (in the spirit of anarchy I just put it into `C:\Windows`).
+* **Installing chromedriver on OS X:** I hear you can install it [using homebrew](https://formulae.brew.sh/cask/chromedriver), but I've never done it! You can also follow the link above and click the "latest stable release" link, then download `chromedriver_mac64.zip`. Unzip it, then move the `chromedriver` file into your `PATH`. I typically put it in `/usr/local/bin`.
+* **Installing chromedriver on Windows:** Follow the link above, click the "latest stable release" link. Download `chromedriver_win32.zip`, unzip it, and move `chromedriver.exe` into your `PATH` (in the spirit of anarchy I just put it in `C:\Windows`).
+* **Installing chromedriver on Debian/Ubuntu:** Just run `apt install chromium-chromedriver` and it'll work.
 
 ## Quickstart
 
@@ -56,7 +57,7 @@ We turn off headless mode because it's fun to watch!
 
 ## Persine basics
 
-Persine is built around an **Engine** that stores all of your global settings, and **Personas** that represent the individual users who browse the web.
+Persine is built around an **engine** that stores all of your global settings, and **personas** that represent the individual users who browse the web.
 
 ### Creating Personas
 
@@ -75,9 +76,11 @@ By default, personas are single-use and their browsing history will be discarded
 persona = engine.persona('Mulberry')
 ```
 
+This is useful in conjunction with signing in to YouTube (see below), allowing you to imitate a real user watching videos over multiple sessions.
+
 ### Launching Chrome and visiting pages
 
-You can use `with` to automatically start/stop Chrome.
+You can use `with` to automatically start/stop Chrome. Makes life easy.
 
 ```python
 with engine.persona() as persona:
@@ -95,7 +98,7 @@ persona.run("youtube:next_up#3")
 persona.quit()
 ```
 
-We can turn off headless mode if we want to actually watch what Chrome is up to. When running in this mode, Persine automatically installs [uBlock Origin](https://chrome.google.com/webstore/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm) so you don't have to deal with ads.
+We can turn headless mode off or on depending on whether we want to actually watch what Chrome is up to. When running in non-headless mode, Persine automatically installs [uBlock Origin](https://chrome.google.com/webstore/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm) so you don't have to deal with ads.
 
 ```python
 engine = PersonaEngine(headless=False)
@@ -105,9 +108,11 @@ engine = PersonaEngine(headless=False)
  
 ### Seeing and saving results
 
-**History** is all of your commands and the pages visited, while **recommendations** are what you've been recommended to watch. It includes video sidebars, homepage listings, and search results.
+**History** is all of your commands you've run and the pages you've visited, while **recommendations** are what you've been recommended. Recommendations include video sidebars, homepage listings, and search results.
 
-For convenience, you can use `.to_df()` to see these as pandas DataFrames.
+> Right now recommendations also include ads and unrelated promoted content. I'm on the fence about whether they should stay or go.
+
+For convenience, you can use `.to_df()` to see history and recommendations as pandas DataFrames.
 
 ```python
 persona.recommendations.to_df()
@@ -125,8 +130,6 @@ persona.history.to_csv('hist.csv')
 
 **Bridges** are site-specific scrapers that tell Persine what to click, what to scrape, and other site-specific commands. Right now the only bridge we have is for **YouTube** (add more, please?).
 
-
-
 ### YouTube commands
 
 Tthe YouTube bridge supports the following custom commands:
@@ -140,7 +143,7 @@ Tthe YouTube bridge supports the following custom commands:
 |`youtube:dislike`|Clicks the dislike button|
 |`youtube:subscribe`|Clicks the subscribe button|
 |`youtube:unsubscribe`|Clicks the unsubscribe button|
-|`youtube:sign_in`|Begins the signin process. You'll need to complete it manually|
+|`youtube:sign_in`|Begins the signin process. You'll need to complete the process manually, but Persine will resume as soon as it notices you're logged in.|
 
 ### Repeating commands
 
