@@ -58,6 +58,14 @@ def test_recommendation_scraper(driver):
         assert rec["url"] is not None
 
 
+def test_likes_v_dislikes(driver):
+    bridge = YoutubeBridge(driver)
+    bridge.run("https://www.youtube.com/watch?v=1kIQT7uUiME")
+
+    data = bridge.get_player_page_data()
+    assert data['dislike_count'] != data['like_count']
+
+
 def test_homepage_scraper(driver):
     bridge = YoutubeBridge(driver)
     bridge.run("https://www.youtube.com/")

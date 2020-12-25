@@ -34,6 +34,7 @@ def test_history(engine):
     assert len(persona.history) == 0
     persona.update_history(
         {
+            "key": "test-key-1",
             "url": "sample",
             "action": "test:sample",
             "recommendations": [{"number": 1}, {"number": 2}, {"number": 3}],
@@ -41,6 +42,7 @@ def test_history(engine):
     )
     persona.update_history(
         {
+            "key": "test-key-2",
             "url": "sample2",
             "action": "test:sample",
             "recommendations": [{"number": 3}, {"number": 2}, {"number": 1}],

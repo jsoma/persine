@@ -59,7 +59,7 @@ class YoutubeBridge:
             try { data['view_count'] = document.querySelector('#info #count .view-count').innerText } catch(err) {};
             try { data['posted_on'] = document.querySelector('#info #date yt-formatted-string').innerText } catch(err) {};
             try { data['like_count'] = document.querySelector("yt-formatted-string[aria-label*= likes").ariaLabel } catch(err) {};
-            try { data['dislike_count'] = document.querySelector("yt-formatted-string[aria-label*= likes").ariaLabel } catch(err) {};
+            try { data['dislike_count'] = document.querySelector("yt-formatted-string[aria-label*= dislikes").ariaLabel } catch(err) {};
             return data;
         """
         )

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "persine"
-version = "0.1.0"
+version = "0.1.1"
 description = "Persine is an automated tool to study and reverse-engineer algorithmic recommendation systems. It has a simple interface and encourages reproducible results."
 authors = ["Jonathan Soma <jonathan.soma@gmail.com>"]
 include = ["extensions/ublock-origin.crx"]
