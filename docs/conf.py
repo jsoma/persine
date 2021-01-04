@@ -25,7 +25,7 @@ author = 'Jonathan Soma'
 
 version = persine.__version__
 # The full version, including alpha/beta/rc tags
-release = '0.1.1'
+release = persine.__version__
 
 
 # -- General configuration ---------------------------------------------------
