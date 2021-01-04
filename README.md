@@ -1,3 +1,5 @@
+[![Documentation Status](https://readthedocs.org/projects/persine/badge/?version=latest)](https://persine.readthedocs.io/en/latest/?badge=latest)
+
 # Persine, the Persona Engine
 
 Persine is an **automated tool to study and reverse-engineer algorithmic recommendation systems**. It has a simple interface and encourages reproducible results. You tell Persine to drive around YouTube and it gives back a spreadsheet of what else YouTube suggests you watch!
