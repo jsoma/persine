@@ -23,7 +23,9 @@ If you didn't quite get enough data, don't worry – you can resume your explora
 
 ### An actual example
 
-See Persine in action [on Google Colab](https://colab.research.google.com/drive/1eAbfwV9mL34LVVIzW4AgwZt5NZJ21LwT?usp=sharing). Includes a few examples for analysis, too.
+See Persine in action [on Google Colab](https://colab.research.google.com/drive/1eAbfwV9mL34LVVIzW4AgwZt5NZJ21LwT?usp=sharing).
+
+Includes a few examples for analysis, too.
 
 ## Installation
 
@@ -33,11 +35,7 @@ pip install persine
 
 Persine will automatically install Selenium and BeautifulSoup for browsing/scraping, pandas for data analysis, and pillow for processing screenshots.
 
-You will need to install [chromedriver](https://chromedriver.chromium.org/) to allow Selenium to control Chrome. **Persine won't work without it!**
-
-* **Installing chromedriver on OS X:** I hear you can install it [using homebrew](https://formulae.brew.sh/cask/chromedriver), but I've never done it! You can also follow the link above and click the "latest stable release" link, then download `chromedriver_mac64.zip`. Unzip it, then move the `chromedriver` file into your `PATH`. I typically put it in `/usr/local/bin`.
-* **Installing chromedriver on Windows:** Follow the link above, click the "latest stable release" link. Download `chromedriver_win32.zip`, unzip it, and move `chromedriver.exe` into your `PATH` (in the spirit of anarchy I just put it in `C:\Windows`).
-* **Installing chromedriver on Debian/Ubuntu:** Just run `apt install chromium-chromedriver` and it'll work.
+You will need to manually install chromedriver to allow Selenium to control Chrome. [See details here](https://persine.readthedocs.io/en/latest/user/install.html)
 
 ## Quickstart
 
@@ -56,3 +54,7 @@ with engine.persona() as persona:
 ```
 
 We turn off headless mode because it's fun to watch!
+
+## More examples, more features, more everything
+
+[Find the complete documentation here](https://persine.readthedocs.io/)
