@@ -26,6 +26,8 @@ Persine is dead simple to use.
 
 In this example, we visit a YouTube video, click the "next up" video three times, and then revisit the original video. We then save the results for later analysis.
 
+See Persine in action [on Google Colab](https://colab.research.google.com/drive/1eAbfwV9mL34LVVIzW4AgwZt5NZJ21LwT?usp=sharing).
+
 The User Guide
 --------------
 
