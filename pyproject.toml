@@ -16,10 +16,14 @@ beautifulsoup4 = ">=4.6.3"
 selenium = "^3.141.0"
 pandas = "^1.1.5"
 Pillow = ">=7.0.0"
+sphinx = {version = "^3", optional = true}
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.6.0"
 pytest = "^6.2.1"
+
+[tool.poetry.extras]
+docs = ["sphinx"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
