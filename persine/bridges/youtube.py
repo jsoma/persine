@@ -169,18 +169,39 @@ class YoutubeBridge(BaseBridge):
         """  # noqa: E501
         )
 
+    def __attempt_ad_skip(self, delay=6):
+        print("Waiting")
+        time.sleep(delay)
+        print("Clicking button")
+        self.driver.find_element_by_class_name("ytp-ad-skip-button-text").click()
+
     def __wait_for_video_completion(self, skipahead=True):
         try:
-            self.__get_player_state()
-        except Exception:
-            time.sleep(5)
-            self.__click_link("Skip Ad")
+            # Confirm it's a video page
+            self.driver.find_element_by_css_selector("#movie_player")
+
+            # Wait for the player to be ready
+            while True:
+                try:
+                    # This will throw an exception if the player 
+                    # is not initialized
+                    self.__get_player_state()
+                    break
+                except:
+                    time.sleep(1)
+        except:
+            pass
 
         try:
-            self.__get_player_state()
-        except Exception:
-            time.sleep(15)
-            self.__click_link("Skip Ad")
+            # Wait for ad overlay to show up, then click the 
+            # skip button.
+            WebDriverWait(self.driver, 3).until(
+                EC.visibility_of_element_located((By.CLASS_NAME, "ad-showing"))
+            )
+            self.__attempt_ad_skip()
+        except:
+            # No ad
+            pass
 
         if self.__get_player_state() != 1:
             self.__play_video()

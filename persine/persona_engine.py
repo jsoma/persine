@@ -101,6 +101,7 @@ class PersonaEngine:
         if self.headless:
             options.add_argument("--headless")
         else:
+            # TODO this should be an option. Also, maybe no ad blocking?
             ext_path = os.path.join(
                 os.path.dirname(__file__), "../extensions/ublock-origin.crx"
             )
