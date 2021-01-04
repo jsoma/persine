@@ -4,18 +4,21 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from urllib.parse import urlparse
 from urllib.parse import quote_plus
+from .bridge import BaseBridge
+
+class YoutubeBridge(BaseBridge):
+    """A bridge that interacts with and scrapes YouTube"""
 
 
-class YoutubeBridge:
     def __init__(self, driver):
         self.driver = driver
 
-    def disable_autoplay(self):
+    def __disable_autoplay(self):
         self.driver.execute_script(
             "document.getElementById('movie_player').setAutonavState(1);"
         )
 
-    def click_link(self, text, timeout=3):
+    def __click_link(self, text, timeout=3):
         try:
             WebDriverWait(self.driver, timeout).until(
                 EC.visibility_of_element_located((By.PARTIAL_LINK_TEXT, text))
@@ -24,7 +27,7 @@ class YoutubeBridge:
         except Exception:
             pass
 
-    def get_player_state(self):
+    def __get_player_state(self):
         # -1 – unstarted
         # 0 – ended
         # 1 – playing
@@ -35,21 +38,21 @@ class YoutubeBridge:
             "return document.getElementById('movie_player').getPlayerState();"
         )
 
-    def play_video(self):
+    def __play_video(self):
         self.driver.execute_script(
             """
         document.getElementById('movie_player').playVideo();
         """
         )
 
-    def get_player_data(self):
+    def __get_player_data(self):
         return self.driver.execute_script(
             """
         return document.getElementById('movie_player').getVideoData()
         """
         )
 
-    def get_player_page_data(self):
+    def __get_player_page_data(self):
         return self.driver.execute_script(
             """
             data = {};
@@ -64,16 +67,16 @@ class YoutubeBridge:
         """
         )
 
-    def get_video_data(self):
-        data = self.get_player_data()
-        player_page_data = self.get_player_page_data()
+    def __get_video_data(self):
+        data = self.__get_player_data()
+        player_page_data = self.__get_player_page_data()
         video = {
             **player_page_data,
             "page_type": "video",
             "title": data["title"],
             "id": data["video_id"],
             "channel_name": data["author"],
-            "recommendations": self.scrape_sidebar(),
+            "recommendations": self.__scrape_sidebar(),
             "caption_tracks": self.driver.execute_script(
                 """
                  player = document.querySelector("#movie_player");
@@ -85,7 +88,7 @@ class YoutubeBridge:
 
         return video
 
-    def get_page_data(self):
+    def __get_page_data(self):
         return self.driver.execute_script(
             """
             try {
@@ -96,7 +99,7 @@ class YoutubeBridge:
         """
         )
 
-    def scrape_sidebar(self):
+    def __scrape_sidebar(self):
         recs = self.driver.execute_script(
             """
         return [...document.querySelectorAll("#items.ytd-watch-next-secondary-results-renderer > *")].map((d, i) => {
@@ -118,7 +121,7 @@ class YoutubeBridge:
 
         return recs
 
-    def scrape_search_results(self):
+    def __scrape_search_results(self):
         recs = self.driver.execute_script(
             """
         return [...document.querySelectorAll("#contents.ytd-item-section-renderer > *")].map((d, i) => {
@@ -145,7 +148,7 @@ class YoutubeBridge:
         ]
         return recs
 
-    def scrape_homepage(self):
+    def __scrape_homepage(self):
         return self.driver.execute_script(
             """
         return [...document.querySelectorAll("#contents.ytd-rich-grid-renderer > ytd-rich-item-renderer")].map((d, i) => {
@@ -166,21 +169,21 @@ class YoutubeBridge:
         """  # noqa: E501
         )
 
-    def wait_for_video_completion(self, skipahead=True):
+    def __wait_for_video_completion(self, skipahead=True):
         try:
-            self.get_player_state()
+            self.__get_player_state()
         except Exception:
             time.sleep(5)
-            self.click_link("Skip Ad")
+            self.__click_link("Skip Ad")
 
         try:
-            self.get_player_state()
+            self.__get_player_state()
         except Exception:
             time.sleep(15)
-            self.click_link("Skip Ad")
+            self.__click_link("Skip Ad")
 
-        if self.get_player_state() != 1:
-            self.play_video()
+        if self.__get_player_state() != 1:
+            self.__play_video()
 
         if skipahead:
             time.sleep(1)
@@ -197,13 +200,13 @@ class YoutubeBridge:
             "return document.getElementById('movie_player').getDuration()"
         )
         WebDriverWait(self.driver, length + 20).until(
-            lambda s: self.get_player_state() == 0
+            lambda s: self.__get_player_state() == 0
         )
-        self.disable_autoplay()
+        self.__disable_autoplay()
 
-    def page_type(self):
+    def __get_page_type(self):
         # TODO remove and replace
-        key = list(self.get_page_data()["contents"].keys())[0]
+        key = list(self.__get_page_data()["contents"].keys())[0]
         types = {
             "twoColumnWatchNextResults": "video",
             "twoColumnSearchResultsRenderer": "search_results",
@@ -212,19 +215,19 @@ class YoutubeBridge:
         return types[key]
 
     def get_data(self):
-        page_type = self.page_type()
+        page_type = self.__get_page_type()
         if page_type == "video":
-            return self.get_video_data()
+            return self.__get_video_data()
         elif page_type == "search_results":
             return {
                 "page_type": page_type,
                 "term": self.driver.find_element_by_css_selector(
                     "input#search"
                 ).get_attribute("value"),
-                "recommendations": self.scrape_search_results(),
+                "recommendations": self.__scrape_search_results(),
             }
         elif page_type == "homepage":
-            return {"page_type": page_type, "recommendations": self.scrape_homepage()}
+            return {"page_type": page_type, "recommendations": self.__scrape_homepage()}
 
     def run(self, url):
         parsed = urlparse(url)
@@ -242,8 +245,8 @@ class YoutubeBridge:
         # Execute the command
         if parsed.scheme in ["http", "https"]:
             self.driver.get(url)
-            if self.page_type() == "video":
-                self.wait_for_video_completion()
+            if self.__get_page_type() == "video":
+                self.__wait_for_video_completion()
         elif parsed.path == "homepage":
             self.driver.get("https://www.youtube.com/")
         elif parsed.path == "search":
@@ -254,7 +257,7 @@ class YoutubeBridge:
             self.driver.find_element_by_css_selector(
                 "ytd-compact-autoplay-renderer h3"
             ).click()
-            self.wait_for_video_completion()
+            self.__wait_for_video_completion()
         elif parsed.path == "like":
             self.driver.find_element_by_xpath(
                 '//button[starts-with(@aria-label, "Like")]'

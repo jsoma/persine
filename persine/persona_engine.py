@@ -14,13 +14,30 @@ from .persona import Persona
 
 
 class PersonaEngine:
+    """PersonaEngine is used to generate personas. You can think of it as a place
+        to store all of your settings.
+
+    Args:
+        height (int): Height of the browser window
+        weight (int): Width of the browser window
+        screenshot_scale (float): Scaling factor for saved screenshots
+        screenshot (Union[str, list]): Whether screenshots are saved, and whether they go to history or to disk
+        html (Union[str, list]): Whether HTML is saved, and whether it goes to history or to disk
+        compress_html (boolean): Whether HTML should be compressed or not before saving to the history
+        cache_dir (str): Where to save on-disk screenshots and HTML files
+        data_dir (str): Root directory where persona data (Chrome profiles) are stored
+        headless (boolean): Whether to start the browser in headless mode
+        driver: WebDriver to use instead of starting a new one
+        resume (boolean): Whether to pick up where the previous run left off.
+    """
+
     def __init__(
         self,
         height=1200,
         width=1600,
         screenshot_scale=0.5,
-        screenshot=False,
-        html=False,
+        screenshot=None,
+        html=None,
         compress_html=True,
         cache_dir=None,
         data_dir=None,
@@ -37,7 +54,7 @@ class PersonaEngine:
         self.compress_html = compress_html
         self.url_before_action = None
         self.headless = headless
-        self.resume = resume
+        self.resume = False
 
         if data_dir is not None:
             self.data_dir = data_dir
@@ -53,11 +70,21 @@ class PersonaEngine:
 
         self.custom_driver = driver
 
-    def persona(self, name=None):
-        """Returns a Persona initialized from the engine"""
-        return Persona(self, name=name, resume=self.resume)
+    def persona(self, name=None, resume=False):
+        """Initializes a persona with the given name.
+        
+        Returns:
+            Persona: The persona initialized by the engine.
+        """
+        return Persona(self, name=name, resume=resume)
 
-    def driver_options(self, user_data_dir=None):
+    def get_driver_options(self, user_data_dir=None):
+        """Create the options necessary to start the appropriate
+        webdriver.Chrome instance
+
+        Returns:
+            webdriver.ChromeOptions"""
+
         options = webdriver.ChromeOptions()
 
         default_args = [
@@ -87,16 +114,24 @@ class PersonaEngine:
         return options
 
     def launch(self, user_data_dir=None):
-        """Launches a Chrome instance and returns a Selenium webdriver"""
+        """Launches a Chrome instance.
+        
+        Returns:
+            webdriver.Chrome"""
         if self.custom_driver:
             return self.custom_driver
 
-        options = self.driver_options()
+        options = self.get_driver_options()
 
         return webdriver.Chrome(options=options)
 
     def get_state(self, driver, url):
-        """Returns a dictionary representation of the current page"""
+        """
+        Get the current state of the page.
+
+        Returns:
+            dict: A representation of the current page (key, action, url, etc)
+        """
 
         # Give everything a unique key
         key = datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")[:-3]
@@ -118,7 +153,7 @@ class PersonaEngine:
                 with open(source_filepath, "w") as outfile:
                     outfile.write(html)
 
-            if self.html == "log" or "log" in self.html:
+            if self.html == "history" or "history" in self.html:
                 if self.compress_html:
                     compressed = zlib.compress(html.encode("utf-8"))
                     state["page_source"] = base64.b64encode(compressed).decode(
@@ -140,7 +175,7 @@ class PersonaEngine:
                 )  # noqa: E501
 
             # Save to state
-            if self.screenshot == "log" or "log" in self.screenshot:
+            if self.screenshot == "history" or "history" in self.screenshot:
                 buffer = io.BytesIO()
                 ss.save(buffer, "JPEG", optimize=optimize, quality=quality)
                 state["screenshot"] = str(base64.b64encode(buffer.getvalue()))
@@ -152,8 +187,10 @@ class PersonaEngine:
 
     def take_screenshot(self, driver):
         """
-        Take a screenshot of the current window. Note that the
-        result is resized according to screenshot_scale.
+        Take a screenshot of the current window.
+        
+        Returns:
+            Image: The resized screenshot
         """
         screenshot = Image.open(io.BytesIO(driver.get_screenshot_as_png()))
         size = (
@@ -167,8 +204,10 @@ class PersonaEngine:
         """
         Runs a command through the appropriate bridge.
 
-        Returns a single state representation or a list of
-        state representations.
+        Returns:
+            Union[dict, list(dict)]: A single state representation. Will return a
+            list of state representations if it's a multi-step command.
+            For example, youtube:next_up#30 to hit 'next up' 30 times
         """
         if "chrome-search" not in driver.current_url and not driver.current_url.startswith("data"):
             self.url_before_action = driver.current_url

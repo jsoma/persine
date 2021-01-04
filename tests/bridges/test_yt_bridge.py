@@ -17,7 +17,7 @@ def driver():
 def test_player_data(driver):
     bridge = YoutubeBridge(driver)
     driver.get("https://www.youtube.com/watch?v=1kIQT7uUiME")
-    res = bridge.get_player_data()
+    res = bridge.__get_player_data()
 
     comps = {
         "title": "Land of Talk - Some Are Lakes [Official Music Video]",
@@ -31,7 +31,7 @@ def test_player_data(driver):
 def test_video_data(driver):
     bridge = YoutubeBridge(driver)
     bridge.run("https://www.youtube.com/watch?v=1kIQT7uUiME")
-    res = bridge.get_video_data()
+    res = bridge.__get_video_data()
 
     comps = {
         "page_type": "video",
@@ -50,7 +50,7 @@ def test_recommendation_scraper(driver):
     bridge = YoutubeBridge(driver)
     bridge.run("https://www.youtube.com/watch?v=1kIQT7uUiME")
 
-    recs = bridge.scrape_sidebar()
+    recs = bridge.__scrape_sidebar()
     assert len(recs) > 5
     for rec in recs:
         assert rec["item_type"] is not None
@@ -62,7 +62,7 @@ def test_likes_v_dislikes(driver):
     bridge = YoutubeBridge(driver)
     bridge.run("https://www.youtube.com/watch?v=1kIQT7uUiME")
 
-    data = bridge.get_player_page_data()
+    data = bridge.__get_player_page_data()
     assert data['dislike_count'] != data['like_count']
 
 
@@ -70,7 +70,7 @@ def test_homepage_scraper(driver):
     bridge = YoutubeBridge(driver)
     bridge.run("https://www.youtube.com/")
 
-    recs = bridge.scrape_homepage()
+    recs = bridge.__scrape_homepage()
 
     assert len(recs) > 5
     for rec in recs:
@@ -83,7 +83,7 @@ def test_search_results(driver):
     bridge = YoutubeBridge(driver)
     bridge.run("youtube:search?lofi")
 
-    recs = bridge.scrape_search_results()
+    recs = bridge.__scrape_search_results()
 
     assert len(recs) > 5
     for rec in recs:

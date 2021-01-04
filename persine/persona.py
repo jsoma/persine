@@ -7,13 +7,31 @@ from .utils import RecommendationList
 
 
 class Persona:
+    """
+    The Persona represents a single user. If it is
+    given a name, it is associated with an individual
+    Chrome profile.
+
+    Args:
+        engine (PersonaEngine): The engine to associate with this persona
+        name (str): The name to be given to this profile. If not named, an
+            empty profile is used.
+        history_path (str): Path to the JSON file that holds this persona's
+            action/browsing history
+        user_data_dir (str): If specified, load the Chrome profile from this
+            folder
+        resume (boolean): Whether this persona should resume a previous persona
+            with the same name. If False, the previous Chrome profile is deleted.
+        overwrite (boolean): Whether to prompt the user when overwriting a previous
+            persona's Chrome profile (see resume)
+    """
     def __init__(
         self,
         engine,
         name=None,
         history_path=None,
         user_data_dir=None,
-        resume=True,
+        resume=False,
         overwrite=False,
     ):
         self.engine = engine
@@ -45,7 +63,7 @@ class Persona:
 
     def clear(self):
         """
-        Deletes all pervious data, including history file and user_data_dir
+        Deletes all previous data for that Chrome profile, including history file and user_data_dir
         """
         if self.user_data_dir:
             if not self.overwrite:
@@ -60,10 +78,16 @@ class Persona:
                 pass
 
     def __enter__(self):
+        """
+        Launches the browser for use in a context manager
+        """
         self.launch()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        Quits the browser when exiting a context manager
+        """
         self.quit()
 
     def launch(self):
