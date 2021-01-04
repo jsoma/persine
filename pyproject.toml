@@ -8,6 +8,7 @@ license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/jsoma/persine"
 repository = "https://github.com/jsoma/persine"
+documentation = "https://persine.readthedocs.io"
 keywords = ["algorithmic accountability", "recommendation systems", "scraping"]
 
 [tool.poetry.dependencies]
@@ -28,6 +29,3 @@ docs = ["sphinx"]
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
-documentation = "https://persine.readthedocs.io"
