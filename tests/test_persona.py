@@ -17,6 +17,7 @@ def engine():
     eng.data_dir = "/tmp/data_dir"
     eng.history_path = "/tmp/history.json"
     eng.launch = launch_chrome
+    eng.run = lambda driver, action: { 'action': action }
 
     return eng
 
@@ -50,6 +51,31 @@ def test_history(engine):
     )
     assert len(persona.history) == 2
     assert len(persona.recommendations) == 6
+
+def test_history_notes(engine):
+    persona = Persona(engine=engine)
+
+    assert len(persona.history) == 0
+    persona.update_history(
+        {
+            "key": "test-key-1",
+            "url": "sample",
+            "action": "test:sample",
+            "recommendations": [{"number": 1}, {"number": 2}, {"number": 3}],
+        },
+        {
+            "note_key": "note_value"
+        }
+    )
+    
+    assert persona.history[-1]['note_key'] == 'note_value'
+
+def test_run_notes(engine):
+    with Persona(engine=engine) as persona:
+        persona.run('http://jonathansoma.com', {'note_key': 'note_value'})
+
+    assert persona.history[-1]['action'] == 'http://jonathansoma.com'
+    assert persona.history[-1]['note_key'] == 'note_value'
 
 
 def test_startup_shutdown(engine):

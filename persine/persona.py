@@ -104,19 +104,28 @@ class Persona:
         for url in urls:
             self.run(url)
 
-    def run(self, url):
-        """Runs a single command and updates the history"""
+    def run(self, url, notes=None):
+        """
+        Runs a single command and updates the history
+        Args:
+            url (str): The action to run or URL to visit
+            notes (dict): Additional information to include in the history row
+        Returns:
+            Union[dict, list(dict)]: A single state representation. Will return
+                a list of state representations if it's a multi-step command.
+                For example, youtube:next_up#30 to hit 'next up' 30 times
+        """
         if self.driver is None:
             self.launch()
         state = self.engine.run(self.driver, url)
 
         if isinstance(state, list):
             for s in state:
-                self.update_history(s)
+                self.update_history(s, notes)
         else:
-            self.update_history(state)
+            self.update_history(state, notes)
 
-    def update_history(self, state):
+    def update_history(self, state, notes=None):
         """Updates history/recommendations lists with the given state"""
         same_page = [
             "youtube:like",
@@ -125,12 +134,20 @@ class Persona:
             "youtube:unsubscribe",
         ]
 
-        self.history.append(state)
-        if "recommendations" in state and state["action"] not in same_page:
+        new_state = state.copy()
+        if notes is not None:
+            print(new_state)
+            for key, value in notes.items():
+                if key in new_state:
+                    raise Exception(f"key {key} already exists in state")
+                new_state[key] = value
+
+        self.history.append(new_state)
+        if "recommendations" in new_state and new_state["action"] not in same_page:
             for rec in state["recommendations"]:
                 self.recommendations.append({
                     **rec,
-                    'action_key': state['key']
+                    'action_key': new_state['key']
                 })
         self.save_history()
 
