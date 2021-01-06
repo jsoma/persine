@@ -56,6 +56,11 @@ class YoutubeBridge(BaseBridge):
         return self.driver.execute_script(
             """
             data = {};
+            player = document.querySelector("#movie_player");
+
+            try { data['is_live'] = player.getVideoData().isLive } catch(err) {};
+            try { data['is_listed'] = player.getVideoData().isListed } catch(err) {};
+
             try { data['channel_url'] = document.querySelector('.ytd-channel-name a')['href'] } catch(err) {};
             try { data['channel_sub_count'] = document.querySelector("#owner-sub-count").innerText } catch(err) {};
             try { data['view_count'] = document.querySelector('#info #count .view-count').innerText } catch(err) {};
@@ -73,9 +78,11 @@ class YoutubeBridge(BaseBridge):
         video = {
             **player_page_data,
             "page_type": "video",
-            "title": data["title"],
-            "id": data["video_id"],
-            "channel_name": data["author"],
+            "title": data.get("title", None),
+            "id": data.get("video_id", None),
+            "channel_name": data.get("author", None),
+            "is_live": data.get("is_live", None),
+            "is_listed": data.get("is_listed", None),
             "recommendations": self.__scrape_sidebar(),
             "caption_tracks": self.driver.execute_script(
                 """
@@ -170,9 +177,7 @@ class YoutubeBridge(BaseBridge):
         )
 
     def __attempt_ad_skip(self, delay=6):
-        print("Waiting")
         time.sleep(delay)
-        print("Clicking button")
         self.driver.find_element_by_class_name("ytp-ad-skip-button-text").click()
 
     def __wait_for_video_completion(self, skipahead=True):
@@ -220,24 +225,42 @@ class YoutubeBridge(BaseBridge):
         length = self.driver.execute_script(
             "return document.getElementById('movie_player').getDuration()"
         )
-        WebDriverWait(self.driver, length + 20).until(
-            lambda s: self.__get_player_state() == 0
+        
+        is_live = self.driver.execute_script(
+            "return document.getElementById('movie_player').getVideoData().isLive"
         )
-        self.__disable_autoplay()
+
+        print(length, is_live)
+
+        if length == 0 or is_live:
+            # It's live, just exit
+            time.sleep(2)
+            return
+        else:
+            # Wait until it's done
+            WebDriverWait(self.driver, length + 20).until(
+                lambda s: self.__get_player_state() == 0
+            )
+            self.__disable_autoplay()
 
     def __get_page_type(self):
         # TODO remove and replace
-        key = list(self.__get_page_data()["contents"].keys())[0]
-        types = {
-            "twoColumnWatchNextResults": "video",
-            "twoColumnSearchResultsRenderer": "search_results",
-            "twoColumnBrowseResultsRenderer": "homepage",
-        }
-        return types[key]
+        try:
+            key = list(self.__get_page_data()["contents"].keys())[0]
+            types = {
+                "twoColumnWatchNextResults": "video",
+                "twoColumnSearchResultsRenderer": "search_results",
+                "twoColumnBrowseResultsRenderer": "homepage",
+            }
+            return types[key]
+        except:
+            return "invalid"
 
     def get_data(self):
         page_type = self.__get_page_type()
-        if page_type == "video":
+        if page_type == "invalid":
+            return { "page_type": page_type }
+        elif page_type == "video":
             return self.__get_video_data()
         elif page_type == "search_results":
             return {

@@ -101,8 +101,8 @@ class Persona:
 
     def run_batch(self, urls):
         """Run a series of commands"""
-        for url in urls:
-            self.run(url)
+        return [self.run(url) for url in urls]
+
 
     def run(self, url, notes=None):
         """
@@ -117,6 +117,7 @@ class Persona:
         """
         if self.driver is None:
             self.launch()
+
         state = self.engine.run(self.driver, url)
 
         if isinstance(state, list):
@@ -124,6 +125,8 @@ class Persona:
                 self.update_history(s, notes)
         else:
             self.update_history(state, notes)
+        
+        return self.history[-1]
 
     def update_history(self, state, notes=None):
         """Updates history/recommendations lists with the given state"""
