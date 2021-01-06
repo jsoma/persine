@@ -81,8 +81,8 @@ class YoutubeBridge(BaseBridge):
             "title": data.get("title", None),
             "id": data.get("video_id", None),
             "channel_name": data.get("author", None),
-            "is_live": data.get("is_live", None),
-            "is_listed": data.get("is_listed", None),
+            "is_live": player_page_data.get("is_live", None),
+            "is_listed": player_page_data.get("is_listed", None),
             "recommendations": self.__scrape_sidebar(),
             "caption_tracks": self.driver.execute_script(
                 """
@@ -232,7 +232,7 @@ class YoutubeBridge(BaseBridge):
 
         if length == 0 or is_live:
             # It's live, just exit
-            time.sleep(2)
+            time.sleep(1)
             return
         else:
             # Wait until it's done
