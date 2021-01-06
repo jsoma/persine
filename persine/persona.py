@@ -70,7 +70,7 @@ class Persona:
                 response = input(f"Delete folder {self.user_data_dir}? [y/n]")
                 if not response.lower().startswith("y"):
                     raise Exception("Don't want to delete")
-            shutil.rmtree(self.user_data_dir)
+            shutil.rmtree(self.user_data_dir, ignore_errors=True)
         if self.history_path:
             try:
                 os.remove(self.history_path)
@@ -139,7 +139,6 @@ class Persona:
 
         new_state = state.copy()
         if notes is not None:
-            print(new_state)
             for key, value in notes.items():
                 if key in new_state:
                     raise Exception(f"key {key} already exists in state")

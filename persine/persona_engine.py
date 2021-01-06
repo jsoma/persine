@@ -222,7 +222,7 @@ class PersonaEngine:
             states = [self.run(driver, command) for _ in range(iterations)]
             return states
 
-        if "youtube" in url:
+        if "youtu" in url:
             self.bridge_data = YoutubeBridge(driver).run(url)
         elif "amazon" in url:
             self.bridge_data = AmazonBridge(driver).run(url)

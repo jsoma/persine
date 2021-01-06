@@ -230,8 +230,6 @@ class YoutubeBridge(BaseBridge):
             "return document.getElementById('movie_player').getVideoData().isLive"
         )
 
-        print(length, is_live)
-
         if length == 0 or is_live:
             # It's live, just exit
             time.sleep(2)
