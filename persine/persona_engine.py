@@ -100,6 +100,7 @@ class PersonaEngine:
         # If not headless, add ublock
         if self.headless:
             options.add_argument("--headless")
+            options.add_argument("--mute-audio")
         else:
             # TODO this should be an option. Also, maybe no ad blocking?
             ext_path = os.path.join(
