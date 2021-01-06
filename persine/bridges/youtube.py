@@ -118,6 +118,7 @@ class YoutubeBridge(BaseBridge):
             try { data['channel_name'] = d.querySelector(".ytd-channel-name").innerText } catch(err) {};
             try { data['metadata'] = d.querySelector("#metadata-line").innerText } catch(err) {};
             try { data['duration_text'] = d.querySelector("span.ytd-thumbnail-overlay-time-status-renderer").innerText.trim() } catch(err) {};
+            try { data['thumbnail_url'] = d.querySelector("img")['src'] } catch(err) {};
             return data;
         })
         """  # noqa: E501
