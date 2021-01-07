@@ -29,6 +29,7 @@ class PersonaEngine:
         headless (boolean): Whether to start the browser in headless mode
         driver: WebDriver to use instead of starting a new one
         resume (boolean): Whether to pick up where the previous run left off.
+        ublock (boolean): Whether to automatically install uBlock Origin
     """
 
     def __init__(
@@ -44,6 +45,7 @@ class PersonaEngine:
         headless=False,
         driver=None,
         resume=False,
+        ublock=False,
     ):
         # Settings
         self.height = height
@@ -55,6 +57,7 @@ class PersonaEngine:
         self.url_before_action = None
         self.headless = headless
         self.resume = resume
+        self.ublock = ublock
 
         if data_dir is not None:
             self.data_dir = data_dir
@@ -101,7 +104,8 @@ class PersonaEngine:
         if self.headless:
             options.add_argument("--headless")
             options.add_argument("--mute-audio")
-        else:
+
+        if self.ublock:
             # TODO this should be an option. Also, maybe no ad blocking?
             ext_path = os.path.join(
                 os.path.dirname(__file__), "../extensions/ublock-origin.crx"
