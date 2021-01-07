@@ -54,7 +54,7 @@ class PersonaEngine:
         self.compress_html = compress_html
         self.url_before_action = None
         self.headless = headless
-        self.resume = False
+        self.resume = resume
 
         if data_dir is not None:
             self.data_dir = data_dir
