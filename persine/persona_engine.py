@@ -127,7 +127,7 @@ class PersonaEngine:
         if self.custom_driver:
             return self.custom_driver
 
-        options = self.get_driver_options()
+        options = self.get_driver_options(user_data_dir)
 
         return webdriver.Chrome(options=options)
 
