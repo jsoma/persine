@@ -235,9 +235,15 @@ class YoutubeBridge(BaseBridge):
             # It's live, just exit
             time.sleep(1)
             return
+        elif 'list' in self.driver.current_url:
+            # It's a playlist, just move on because
+            # it won't autostop
+            return
         else:
-            # Wait until it's done
-            WebDriverWait(self.driver, length + 20).until(
+            # Wait until it's done, or up to 30 seconds
+            # max_wait = length + 20
+            maxwait = 10
+            WebDriverWait(self.driver, max_wait).until(
                 lambda s: self.__get_player_state() == 0
             )
             self.__disable_autoplay()
