@@ -184,7 +184,7 @@ class PersonaEngine:
             if self.screenshot == "history" or "history" in self.screenshot:
                 buffer = io.BytesIO()
                 ss.save(buffer, "JPEG", optimize=optimize, quality=quality)
-                state["screenshot"] = str(base64.b64encode(buffer.getvalue()))
+                state["screenshot"] = base64.b64encode(buffer.getvalue()).decode('ascii')
 
         state = {**state, **self.bridge_data}
         self.bridge_data = None
