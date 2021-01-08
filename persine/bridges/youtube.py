@@ -259,11 +259,11 @@ class YoutubeBridge(BaseBridge):
             }
             return types[key]
         except:
-            return "invalid"
+            return "unknown"
 
     def get_data(self):
         page_type = self.__get_page_type()
-        if page_type == "invalid":
+        if page_type == "unknown":
             return { "page_type": page_type }
         elif page_type == "video":
             return self.__get_video_data()
