@@ -240,13 +240,16 @@ class YoutubeBridge(BaseBridge):
             # it won't autostop
             return
         else:
-            # Wait until it's done, or up to 30 seconds
-            # max_wait = length + 20
-            max_wait = 10
-            WebDriverWait(self.driver, max_wait).until(
-                lambda s: self.__get_player_state() == 0
-            )
-            self.__disable_autoplay()
+            try:
+                # Wait until it's done, or up to XX seconds
+                # max_wait = length + 20
+                max_wait = 10
+                WebDriverWait(self.driver, max_wait).until(
+                    lambda s: self.__get_player_state() == 0
+                )
+                self.__disable_autoplay()
+            except:
+                return
 
     def __get_page_type(self):
         # TODO remove and replace
