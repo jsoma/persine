@@ -242,7 +242,7 @@ class YoutubeBridge(BaseBridge):
         else:
             # Wait until it's done, or up to 30 seconds
             # max_wait = length + 20
-            maxwait = 10
+            max_wait = 10
             WebDriverWait(self.driver, max_wait).until(
                 lambda s: self.__get_player_state() == 0
             )
